@@ -1,0 +1,6 @@
+{
+  "name": "BMI Calculator",
+  "description": "A fully accessible, beautifully localized BMI Calculator supporting English, French, Hausa, Igbo, and Yoruba.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
