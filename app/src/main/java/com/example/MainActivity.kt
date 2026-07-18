@@ -118,6 +118,8 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,17 +133,52 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Bento Theme Palette
-val BentoBg = Color(0xFFFDF7FF)
-val BentoDark = Color(0xFF1D1B20)
-val BentoPurple = Color(0xFF6750A4)
-val BentoLightPurple = Color(0xFFEADDFF)
-val BentoDeepPurple = Color(0xFF21005D)
-val BentoGrayBg = Color(0xFFF3EDF7)
-val BentoLilac1 = Color(0xFFE8DEF8)
-val BentoLilac2 = Color(0xFFD0BCFF)
-val BentoMutedText = Color(0xFF49454F)
-val BentoBorder = Color(0xFFCAC4D0)
+val LocalIsDarkMode = staticCompositionLocalOf { false }
+
+// Bento Theme Palette (Dynamic based on Dark Mode)
+val BentoBg: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFF121212) else Color(0xFFFDF7FF)
+
+val BentoDark: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFFF3EDF7) else Color(0xFF1D1B20)
+
+val BentoPurple: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFFD0BCFF) else Color(0xFF6750A4)
+
+val BentoLightPurple: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFF4F378B) else Color(0xFFEADDFF)
+
+val BentoDeepPurple: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFFEADDFF) else Color(0xFF21005D)
+
+val BentoGrayBg: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFF232128) else Color(0xFFF3EDF7)
+
+val BentoLilac1: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFF382F4C) else Color(0xFFE8DEF8)
+
+val BentoLilac2: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFF4F378B) else Color(0xFFD0BCFF)
+
+val BentoMutedText: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFFCAB4D0) else Color(0xFF49454F)
+
+val BentoBorder: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFF3C3843) else Color(0xFFCAC4D0)
+
+val BentoCardBg: Color
+    @Composable
+    get() = if (LocalIsDarkMode.current) Color(0xFF1D1B20) else Color.White
 
 // Data models & units
 enum class UnitSystem {
@@ -531,6 +568,7 @@ fun BmiCalculatorApp() {
 
     val context = LocalContext.current
     val sharedPreferences = remember { context.getSharedPreferences("bmi_prefs", Context.MODE_PRIVATE) }
+    var isDarkMode by remember { mutableStateOf(sharedPreferences.getBoolean("is_dark_mode", false)) }
     var userName by remember { mutableStateOf(sharedPreferences.getString("user_name", "") ?: "") }
     var userEmail by remember { mutableStateOf(sharedPreferences.getString("user_email", "") ?: "") }
     var userPhotoUrl by remember { mutableStateOf(sharedPreferences.getString("user_photo_url", "") ?: "") }
@@ -608,7 +646,9 @@ fun BmiCalculatorApp() {
 
     val snackbarHostState = remember { SnackbarHostState() }
 
-    Scaffold(
+    CompositionLocalProvider(LocalIsDarkMode provides isDarkMode) {
+        MyApplicationTheme(darkTheme = isDarkMode) {
+            Scaffold(
         modifier = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
@@ -837,8 +877,8 @@ fun BmiCalculatorApp() {
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Image(
-                            painter = painterResource(id = R.drawable.img_fitness_hero_1784409629266),
-                            contentDescription = "Healthy Lifestyle Illustration",
+                            painter = painterResource(id = R.drawable.img_gym_exercise_1784415121575),
+                            contentDescription = "Abstract Gym Exercise Illustration",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
@@ -1637,6 +1677,11 @@ fun BmiCalculatorApp() {
                     selectedLangCode = selectedLangCode,
                     onLangSelected = { selectedLangCode = it },
                     onUnitSystemSelected = { unitSystem = it },
+                    isDarkMode = isDarkMode,
+                    onDarkModeSelected = { dark ->
+                        isDarkMode = dark
+                        sharedPreferences.edit().putBoolean("is_dark_mode", dark).apply()
+                    },
                     userName = userName,
                     userEmail = userEmail,
                     isLoggedIn = isLoggedIn,
@@ -1692,6 +1737,8 @@ fun BmiCalculatorApp() {
             },
             selectedLangCode = selectedLangCode
         )
+        }
+        }
     }
 }
 
@@ -1833,11 +1880,14 @@ fun BmiTrendChart(
                 val chartMaxY = maxY + (rangeY * 0.15f)
                 val finalRangeY = chartMaxY - chartMinY
 
+                val cardBg = BentoCardBg
+                val chartColor = BentoPurple
+
                 BoxWithConstraints(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(180.dp)
-                        .background(Color.White, RoundedCornerShape(16.dp))
+                        .background(cardBg, RoundedCornerShape(16.dp))
                         .padding(horizontal = 16.dp, vertical = 20.dp)
                 ) {
                     val width = constraints.maxWidth.toFloat()
@@ -1880,7 +1930,7 @@ fun BmiTrendChart(
                             path = fillPath,
                             brush = androidx.compose.ui.graphics.Brush.verticalGradient(
                                 colors = listOf(
-                                    BentoPurple.copy(alpha = 0.3f),
+                                    chartColor.copy(alpha = 0.3f),
                                     Color.Transparent
                                 )
                             )
@@ -1896,7 +1946,7 @@ fun BmiTrendChart(
                         }
                         drawPath(
                             path = linePath,
-                            color = BentoPurple,
+                            color = chartColor,
                             style = Stroke(
                                 width = 3.dp.toPx(),
                                 join = StrokeJoin.Round,
@@ -2821,7 +2871,7 @@ fun MealRow(emoji: String, title: String, description: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = BentoCardBg),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         border = androidx.compose.foundation.BorderStroke(1.dp, BentoBorder.copy(alpha = 0.5f))
     ) {
@@ -2900,6 +2950,8 @@ fun SettingsScreen(
     selectedLangCode: String,
     onLangSelected: (String) -> Unit,
     onUnitSystemSelected: (UnitSystem) -> Unit,
+    isDarkMode: Boolean,
+    onDarkModeSelected: (Boolean) -> Unit,
     userName: String,
     userEmail: String,
     isLoggedIn: Boolean,
@@ -2958,7 +3010,7 @@ fun SettingsScreen(
                     .clickable { onOpenProfileDialog() }
                     .testTag("settings_profile_card"),
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = BentoCardBg),
                 border = androidx.compose.foundation.BorderStroke(1.dp, BentoBorder.copy(alpha = 0.5f))
             ) {
                 Row(
@@ -3154,12 +3206,100 @@ fun SettingsScreen(
             }
         }
 
+        // Dark Mode Bento Card
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = BentoGrayBg),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "APPEARANCE MODE",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = BentoMutedText,
+                        letterSpacing = 1.1.sp,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        // Light Mode Option
+                        val isLightSelected = !isDarkMode
+                        val lightChipBg by animateColorAsState(
+                            targetValue = if (isLightSelected) BentoCardBg else Color.Transparent,
+                            label = "lightBgColor"
+                        )
+                        val lightContentColor = if (isLightSelected) BentoPurple else BentoMutedText
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(lightChipBg)
+                                .clickable { onDarkModeSelected(false) }
+                                .padding(vertical = 12.dp)
+                                .testTag("settings_theme_light"),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Text("☀️", fontSize = 16.sp)
+                                Text(
+                                    text = "Light",
+                                    color = lightContentColor,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+
+                        // Dark Mode Option
+                        val darkChipBg by animateColorAsState(
+                            targetValue = if (isDarkMode) BentoCardBg else Color.Transparent,
+                            label = "darkBgColor"
+                        )
+                        val darkContentColor = if (isDarkMode) BentoPurple else BentoMutedText
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(darkChipBg)
+                                .clickable { onDarkModeSelected(true) }
+                                .padding(vertical = 12.dp)
+                                .testTag("settings_theme_dark"),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Text("🌙", fontSize = 16.sp)
+                                Text(
+                                    text = "Dark",
+                                    color = darkContentColor,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // WHO Standard BMI Reference Table
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = BentoCardBg),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, BentoBorder.copy(alpha = 0.5f))
             ) {
@@ -3186,7 +3326,7 @@ fun SettingsScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = BentoCardBg),
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.4f))
                 ) {
@@ -3558,7 +3698,7 @@ fun UserProfileDialog(
                         modifier = Modifier.fillMaxWidth().testTag("google_login_button"),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
+                            containerColor = BentoCardBg,
                             contentColor = BentoDark
                         ),
                         border = androidx.compose.foundation.BorderStroke(1.dp, BentoBorder)
@@ -3609,7 +3749,7 @@ fun UserProfileDialog(
                     .fillMaxWidth()
                     .padding(16.dp),
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = BentoCardBg),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Column(
