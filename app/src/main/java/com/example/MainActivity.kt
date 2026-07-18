@@ -2434,7 +2434,7 @@ suspend fun fetchGeminiPrediction(
         .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         .build()
 
-    val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
+    val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=$apiKey"
 
     val requestJson = JSONObject().apply {
         put("contents", JSONArray().apply {
@@ -3311,7 +3311,7 @@ suspend fun fetchGeminiDiet(
         .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         .build()
 
-    val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${"$"}apiKey"
+    val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${"$"}apiKey"
 
     val requestJson = JSONObject().apply {
         put("contents", JSONArray().apply {
