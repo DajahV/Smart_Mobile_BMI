@@ -55,6 +55,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -73,6 +75,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -903,14 +906,17 @@ fun BmiCalculatorApp() {
                             Text(
                                 text = if (userName.isNotBlank()) "$greetingPrefix, $userName!" else trans.title,
                                 color = Color.White,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.ExtraBold
+                                fontSize = 26.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.Serif
                             )
                             Text(
-                                text = "Track • Analyze • Improve",
-                                color = Color.White.copy(alpha = 0.85f),
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium
+                                text = "Track • Analyze • Improve".uppercase(),
+                                color = Color.White.copy(alpha = 0.8f),
+                                fontSize = 10.sp,
+                                fontFamily = FontFamily.SansSerif,
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 1.5.sp
                             )
                         }
                     }
@@ -940,7 +946,7 @@ fun BmiCalculatorApp() {
                             items(languagesList) { lang ->
                                 val isSelected = selectedLangCode == lang.code
                                 val containerColor by animateColorAsState(
-                                    targetValue = if (isSelected) BentoPurple else Color.White,
+                                    targetValue = if (isSelected) BentoPurple else BentoCardBg,
                                     label = "langBoxColor"
                                 )
                                 val textColor = if (isSelected) Color.White else BentoMutedText
@@ -1027,7 +1033,7 @@ fun BmiCalculatorApp() {
                     Card(
                         modifier = Modifier
                             .weight(1.2f)
-                            .height(130.dp),
+                            .height(150.dp),
                         shape = RoundedCornerShape(24.dp),
                         colors = CardDefaults.cardColors(containerColor = BentoGrayBg),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -1041,9 +1047,10 @@ fun BmiCalculatorApp() {
                             Text(
                                 text = trans.genderLabel.uppercase(),
                                 fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.SansSerif,
+                                fontWeight = FontWeight.ExtraBold,
                                 color = BentoMutedText,
-                                letterSpacing = 1.1.sp
+                                letterSpacing = 1.5.sp
                             )
                             
                             Row(
@@ -1055,19 +1062,30 @@ fun BmiCalculatorApp() {
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(if (maleSelected) BentoPurple else Color.White)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(if (maleSelected) BentoPurple else BentoCardBg)
                                         .clickable { gender = Gender.MALE }
-                                        .padding(vertical = 8.dp)
+                                        .padding(vertical = 12.dp)
                                         .testTag("gender_male"),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Male,
-                                        contentDescription = trans.male,
-                                        tint = if (maleSelected) Color.White else BentoMutedText,
-                                        modifier = Modifier.size(20.dp)
-                                    )
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Male,
+                                            contentDescription = trans.male,
+                                            tint = if (maleSelected) Color.White else BentoMutedText,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                        Text(
+                                            text = trans.male,
+                                            color = if (maleSelected) Color.White else BentoMutedText,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                                 
                                 // Female
@@ -1075,19 +1093,30 @@ fun BmiCalculatorApp() {
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .background(if (femaleSelected) BentoPurple else Color.White)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(if (femaleSelected) BentoPurple else BentoCardBg)
                                         .clickable { gender = Gender.FEMALE }
-                                        .padding(vertical = 8.dp)
+                                        .padding(vertical = 12.dp)
                                         .testTag("gender_female"),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Female,
-                                        contentDescription = trans.female,
-                                        tint = if (femaleSelected) Color.White else BentoMutedText,
-                                        modifier = Modifier.size(20.dp)
-                                    )
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Female,
+                                            contentDescription = trans.female,
+                                            tint = if (femaleSelected) Color.White else BentoMutedText,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                        Text(
+                                            text = trans.female,
+                                            color = if (femaleSelected) Color.White else BentoMutedText,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -1097,7 +1126,7 @@ fun BmiCalculatorApp() {
                     Card(
                         modifier = Modifier
                             .weight(1f)
-                            .height(130.dp),
+                            .height(150.dp),
                         shape = RoundedCornerShape(24.dp),
                         colors = CardDefaults.cardColors(containerColor = BentoGrayBg),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -1106,45 +1135,66 @@ fun BmiCalculatorApp() {
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(12.dp),
-                            verticalArrangement = Arrangement.SpaceBetween
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             Text(
                                 text = trans.age.uppercase(),
                                 fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.SansSerif,
+                                fontWeight = FontWeight.ExtraBold,
                                 color = BentoMutedText,
-                                letterSpacing = 1.1.sp
-                            )
-                            
-                            Text(
-                                text = "$age",
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = BentoDark
+                                letterSpacing = 1.5.sp
                             )
                             
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                ButtonStepperBento(
-                                    icon = Icons.Default.Remove,
-                                    testTag = "age_minus",
-                                    onClick = { if (age > 2) age -= 1 },
-                                    accentColor = BentoMutedText,
-                                    buttonSize = 28.dp,
-                                    iconSize = 16.dp
+                                Text(
+                                    text = "$age",
+                                    fontSize = 28.sp,
+                                    fontFamily = FontFamily.Serif,
+                                    fontWeight = FontWeight.Bold,
+                                    color = BentoDark
                                 )
-                                ButtonStepperBento(
-                                    icon = Icons.Default.Add,
-                                    testTag = "age_plus",
-                                    onClick = { if (age < 120) age += 1 },
-                                    accentColor = BentoMutedText,
-                                    buttonSize = 28.dp,
-                                    iconSize = 16.dp
-                                )
+                                
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    ButtonStepperBento(
+                                        icon = Icons.Default.Remove,
+                                        testTag = "age_minus",
+                                        onClick = { if (age > 2) age -= 1 },
+                                        accentColor = BentoMutedText,
+                                        buttonSize = 26.dp,
+                                        iconSize = 14.dp
+                                    )
+                                    ButtonStepperBento(
+                                        icon = Icons.Default.Add,
+                                        testTag = "age_plus",
+                                        onClick = { if (age < 120) age += 1 },
+                                        accentColor = BentoMutedText,
+                                        buttonSize = 26.dp,
+                                        iconSize = 14.dp
+                                    )
+                                }
                             }
+                            
+                            Spacer(modifier = Modifier.height(2.dp))
+                            
+                            Slider(
+                                value = age.toFloat(),
+                                onValueChange = { age = it.roundToInt() },
+                                valueRange = 2f..120f,
+                                modifier = Modifier.fillMaxWidth().height(24.dp).testTag("age_slider"),
+                                colors = SliderDefaults.colors(
+                                    thumbColor = BentoMutedText,
+                                    activeTrackColor = BentoMutedText,
+                                    inactiveTrackColor = BentoMutedText.copy(alpha = 0.2f)
+                                )
+                            )
                         }
                     }
                 }
@@ -1160,7 +1210,7 @@ fun BmiCalculatorApp() {
                     Card(
                         modifier = Modifier
                             .weight(1f)
-                            .height(180.dp),
+                            .height(200.dp),
                         shape = RoundedCornerShape(28.dp),
                         colors = CardDefaults.cardColors(containerColor = BentoLilac1),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -1174,77 +1224,113 @@ fun BmiCalculatorApp() {
                             Text(
                                 text = trans.height.uppercase(),
                                 fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.SansSerif,
+                                fontWeight = FontWeight.ExtraBold,
                                 color = BentoPurple,
-                                letterSpacing = 1.2.sp
+                                letterSpacing = 1.5.sp
                             )
                             
-                            Column {
-                                Text(
-                                    text = if (unitSystem == UnitSystem.METRIC) {
-                                        "${heightCm.roundToInt()}"
-                                    } else {
-                                        "$heightFeet'$heightInches\""
-                                    },
-                                    fontSize = 32.sp,
-                                    fontWeight = FontWeight.Light,
-                                    color = BentoDark
-                                )
-                                Text(
-                                    text = if (unitSystem == UnitSystem.METRIC) "cm" else "ft/in",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = BentoPurple.copy(alpha = 0.7f)
-                                )
-                            }
-                            
-                            // Stepper controls
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                ButtonStepperBento(
-                                    icon = Icons.Default.Remove,
-                                    testTag = if (unitSystem == UnitSystem.METRIC) "height_minus" else "height_feet_minus",
-                                    onClick = {
-                                        if (unitSystem == UnitSystem.METRIC) {
-                                            if (heightCm > 100f) heightCm -= 1f
+                                Column {
+                                    Text(
+                                        text = if (unitSystem == UnitSystem.METRIC) {
+                                            "${heightCm.roundToInt()}"
                                         } else {
-                                            if (heightFeet > 3) heightFeet -= 1
-                                        }
-                                    },
-                                    accentColor = BentoPurple
-                                )
-                                ButtonStepperBento(
-                                    icon = Icons.Default.Add,
-                                    testTag = if (unitSystem == UnitSystem.METRIC) "height_plus" else "height_feet_plus",
-                                    onClick = {
-                                        if (unitSystem == UnitSystem.METRIC) {
-                                            if (heightCm < 220f) heightCm += 1f
-                                        } else {
-                                            if (heightFeet < 8) heightFeet += 1
-                                        }
-                                    },
-                                    accentColor = BentoPurple
-                                )
+                                            "$heightFeet'$heightInches\""
+                                        },
+                                        fontSize = 32.sp,
+                                        fontFamily = FontFamily.Serif,
+                                        fontWeight = FontWeight.Bold,
+                                        color = BentoDark
+                                    )
+                                    Text(
+                                        text = if (unitSystem == UnitSystem.METRIC) "cm" else "ft/in",
+                                        fontSize = 12.sp,
+                                        fontFamily = FontFamily.SansSerif,
+                                        fontWeight = FontWeight.Bold,
+                                        color = BentoPurple.copy(alpha = 0.8f)
+                                    )
+                                }
+                                
+                                // Stepper controls in row
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    ButtonStepperBento(
+                                        icon = Icons.Default.Remove,
+                                        testTag = if (unitSystem == UnitSystem.METRIC) "height_minus" else "height_feet_minus",
+                                        onClick = {
+                                            if (unitSystem == UnitSystem.METRIC) {
+                                                if (heightCm > 100f) heightCm -= 1f
+                                            } else {
+                                                val totalIn = (heightFeet * 12 + heightInches) - 1
+                                                if (totalIn >= 36) {
+                                                    heightFeet = totalIn / 12
+                                                    heightInches = totalIn % 12
+                                                }
+                                            }
+                                        },
+                                        accentColor = BentoPurple,
+                                        buttonSize = 28.dp,
+                                        iconSize = 16.dp
+                                    )
+                                    ButtonStepperBento(
+                                        icon = Icons.Default.Add,
+                                        testTag = if (unitSystem == UnitSystem.METRIC) "height_plus" else "height_feet_plus",
+                                        onClick = {
+                                            if (unitSystem == UnitSystem.METRIC) {
+                                                if (heightCm < 220f) heightCm += 1f
+                                            } else {
+                                                val totalIn = (heightFeet * 12 + heightInches) + 1
+                                                if (totalIn <= 96) {
+                                                    heightFeet = totalIn / 12
+                                                    heightInches = totalIn % 12
+                                                }
+                                            }
+                                        },
+                                        accentColor = BentoPurple,
+                                        buttonSize = 28.dp,
+                                        iconSize = 16.dp
+                                    )
+                                }
                             }
                             
-                            // Progress bar
-                            val progressFraction = if (unitSystem == UnitSystem.METRIC) {
-                                ((heightCm - 100f) / 120f).coerceIn(0f, 1f)
+                            // Fully draggable Slider for Height
+                            if (unitSystem == UnitSystem.METRIC) {
+                                Slider(
+                                    value = heightCm,
+                                    onValueChange = { heightCm = it },
+                                    valueRange = 100f..220f,
+                                    modifier = Modifier.fillMaxWidth().height(24.dp).testTag("height_slider"),
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = BentoPurple,
+                                        activeTrackColor = BentoPurple,
+                                        inactiveTrackColor = BentoPurple.copy(alpha = 0.2f)
+                                    )
+                                )
                             } else {
-                                ((heightFeet - 3f) / 5f).coerceIn(0f, 1f)
+                                val currentTotalInches = (heightFeet * 12 + heightInches).toFloat()
+                                Slider(
+                                    value = currentTotalInches,
+                                    onValueChange = { totalIn ->
+                                        val totalInchesInt = totalIn.roundToInt()
+                                        heightFeet = totalInchesInt / 12
+                                        heightInches = totalInchesInt % 12
+                                    },
+                                    valueRange = 36f..96f,
+                                    modifier = Modifier.fillMaxWidth().height(24.dp).testTag("height_slider"),
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = BentoPurple,
+                                        activeTrackColor = BentoPurple,
+                                        inactiveTrackColor = BentoPurple.copy(alpha = 0.2f)
+                                    )
+                                )
                             }
-                            LinearProgressIndicator(
-                                progress = { progressFraction },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(4.dp)
-                                    .clip(RoundedCornerShape(2.dp)),
-                                color = BentoPurple,
-                                trackColor = BentoPurple.copy(alpha = 0.2f)
-                            )
                         }
                     }
 
@@ -1252,7 +1338,7 @@ fun BmiCalculatorApp() {
                     Card(
                         modifier = Modifier
                             .weight(1f)
-                            .height(180.dp),
+                            .height(200.dp),
                         shape = RoundedCornerShape(28.dp),
                         colors = CardDefaults.cardColors(containerColor = BentoLilac2),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
@@ -1266,76 +1352,91 @@ fun BmiCalculatorApp() {
                             Text(
                                 text = trans.weight.uppercase(),
                                 fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily.SansSerif,
+                                fontWeight = FontWeight.ExtraBold,
                                 color = BentoDeepPurple,
-                                letterSpacing = 1.2.sp
+                                letterSpacing = 1.5.sp
                             )
                             
-                            Column {
-                                Text(
-                                    text = if (unitSystem == UnitSystem.METRIC) {
-                                        "${weightKg.roundToInt()}"
-                                    } else {
-                                        "${weightLbs.roundToInt()}"
-                                    },
-                                    fontSize = 32.sp,
-                                    fontWeight = FontWeight.Light,
-                                    color = BentoDeepPurple
-                                )
-                                Text(
-                                    text = if (unitSystem == UnitSystem.METRIC) "kg" else "lbs",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = BentoDeepPurple.copy(alpha = 0.7f)
-                                )
-                            }
-                            
-                            // Stepper controls
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                ButtonStepperBento(
-                                    icon = Icons.Default.Remove,
-                                    testTag = "weight_minus",
-                                    onClick = {
-                                        if (unitSystem == UnitSystem.METRIC) {
-                                            if (weightKg > 30f) weightKg -= 1f
+                                Column {
+                                    Text(
+                                        text = if (unitSystem == UnitSystem.METRIC) {
+                                            "${weightKg.roundToInt()}"
                                         } else {
-                                            if (weightLbs > 60f) weightLbs -= 1f
-                                        }
-                                    },
-                                    accentColor = BentoDeepPurple
-                                )
-                                ButtonStepperBento(
-                                    icon = Icons.Default.Add,
-                                    testTag = "weight_plus",
-                                    onClick = {
-                                        if (unitSystem == UnitSystem.METRIC) {
-                                            if (weightKg < 180f) weightKg += 1f
-                                        } else {
-                                            if (weightLbs < 400f) weightLbs += 1f
-                                        }
-                                    },
-                                    accentColor = BentoDeepPurple
-                                )
+                                            "${weightLbs.roundToInt()}"
+                                        },
+                                        fontSize = 32.sp,
+                                        fontFamily = FontFamily.Serif,
+                                        fontWeight = FontWeight.Bold,
+                                        color = BentoDeepPurple
+                                    )
+                                    Text(
+                                        text = if (unitSystem == UnitSystem.METRIC) "kg" else "lbs",
+                                        fontSize = 12.sp,
+                                        fontFamily = FontFamily.SansSerif,
+                                        fontWeight = FontWeight.Bold,
+                                        color = BentoDeepPurple.copy(alpha = 0.8f)
+                                    )
+                                }
+                                
+                                // Stepper controls in row
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    ButtonStepperBento(
+                                        icon = Icons.Default.Remove,
+                                        testTag = "weight_minus",
+                                        onClick = {
+                                            if (unitSystem == UnitSystem.METRIC) {
+                                                if (weightKg > 30f) weightKg -= 1f
+                                            } else {
+                                                if (weightLbs > 60f) weightLbs -= 1f
+                                            }
+                                        },
+                                        accentColor = BentoDeepPurple,
+                                        buttonSize = 28.dp,
+                                        iconSize = 16.dp
+                                    )
+                                    ButtonStepperBento(
+                                        icon = Icons.Default.Add,
+                                        testTag = "weight_plus",
+                                        onClick = {
+                                            if (unitSystem == UnitSystem.METRIC) {
+                                                if (weightKg < 180f) weightKg += 1f
+                                            } else {
+                                                if (weightLbs < 400f) weightLbs += 1f
+                                            }
+                                        },
+                                        accentColor = BentoDeepPurple,
+                                        buttonSize = 28.dp,
+                                        iconSize = 16.dp
+                                    )
+                                }
                             }
                             
-                            // Progress bar
-                            val progressFraction = if (unitSystem == UnitSystem.METRIC) {
-                                ((weightKg - 30f) / 150f).coerceIn(0f, 1f)
-                            } else {
-                                ((weightLbs - 60f) / 340f).coerceIn(0f, 1f)
-                            }
-                            LinearProgressIndicator(
-                                progress = { progressFraction },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(4.dp)
-                                    .clip(RoundedCornerShape(2.dp)),
-                                color = BentoDeepPurple,
-                                trackColor = BentoDeepPurple.copy(alpha = 0.2f)
+                            // Fully draggable Slider for Weight
+                            Slider(
+                                value = if (unitSystem == UnitSystem.METRIC) weightKg else weightLbs,
+                                onValueChange = {
+                                    if (unitSystem == UnitSystem.METRIC) {
+                                        weightKg = it
+                                    } else {
+                                        weightLbs = it
+                                    }
+                                },
+                                valueRange = if (unitSystem == UnitSystem.METRIC) 30f..180f else 60f..400f,
+                                modifier = Modifier.fillMaxWidth().height(24.dp).testTag("weight_slider"),
+                                colors = SliderDefaults.colors(
+                                    thumbColor = BentoDeepPurple,
+                                    activeTrackColor = BentoDeepPurple,
+                                    inactiveTrackColor = BentoDeepPurple.copy(alpha = 0.2f)
+                                )
                             )
                         }
                     }
@@ -1771,7 +1872,7 @@ fun ButtonStepperBento(
             .size(buttonSize)
             .clip(CircleShape)
             .testTag(testTag),
-        color = Color.White,
+        color = BentoCardBg,
         shape = CircleShape
     ) {
         Box(contentAlignment = Alignment.Center) {
@@ -1857,7 +1958,7 @@ fun BmiTrendChart(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(180.dp)
-                        .background(Color.White, RoundedCornerShape(16.dp))
+                        .background(BentoCardBg, RoundedCornerShape(24.dp))
                         .padding(20.dp),
                     contentAlignment = Alignment.Center
                 ) {
